@@ -30,15 +30,11 @@ const styles = StyleSheet.create({
   courseContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: 'pink',
+    backgroundColor: '#F9FAFB',
     marginVertical: 8,
     padding: 12,
     borderRadius: 20,
-    elevation: 4,
-    shadowColor: 'black',
-    shadowRadius: 5,
-    shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.5,
+    
   },
   description: {
     fontSize: 16,
@@ -55,6 +51,6 @@ const styles = StyleSheet.create({
   },
   price: {
     fontWeight: 'bold',
-    color: 'blue',
+    color: '#F97316',
   },
 });

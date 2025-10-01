@@ -10,11 +10,10 @@ export default function Input({ label, textInputConfig, style, invalid }) {
   if (invalid) {
     inputStyles.push(styles.invalidInput);
   }
+
   return (
     <View style={[styles.inputContainer, style]}>
-      <Text style={[styles.label, invalid && styles.invalidLabel]}>
-        {label}
-      </Text>
+      <Text style={[styles.label, invalid && styles.invalidLabel]}>{label}</Text>
       <TextInput style={inputStyles} {...textInputConfig} />
     </View>
   );
@@ -22,28 +21,36 @@ export default function Input({ label, textInputConfig, style, invalid }) {
 
 const styles = StyleSheet.create({
   inputContainer: {
-    marginHorizontal: 4,
     marginVertical: 10,
   },
   label: {
     fontSize: 15,
-    color: 'blue',
+    color: '#374151', 
     marginBottom: 4,
+    fontWeight: '500',
   },
   input: {
-    backgroundColor: 'pink',
-    padding: 6,
+    backgroundColor: '#F3F4F6', 
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    margin:2,
     borderRadius: 10,
-    fontSize: 18,
+    fontSize: 16,
+
+    color: '#111827', 
+    borderWidth: 1,
+    borderColor: '#E5E7EB', 
   },
   inputMultiline: {
     minHeight: 100,
+
     textAlignVertical: 'top',
   },
   invalidLabel: {
-    color: 'red',
+    color: '#DC2626',
   },
   invalidInput: {
-    backgroundColor: 'red',
+    borderColor: '#DC2626',
+    backgroundColor: '#FEE2E2', 
   },
 });

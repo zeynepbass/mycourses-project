@@ -1,23 +1,17 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { useLayoutEffect } from 'react';
+import { Pressable, StyleSheet, Text, View, Alert } from 'react-native';
+import React, { useLayoutEffect, useContext } from 'react';
 import { EvilIcons } from '@expo/vector-icons';
-import { useContext } from 'react';
 import { CoursesContext } from '../store/coursesContext';
 import CourseForm from '../components/CourseForm';
 
 export default function ManageCourse({ route, navigation }) {
   const coursesContext = useContext(CoursesContext);
   const courseId = route.params?.courseId;
-  let isEditing = false;
+  const isEditing = !!courseId;
 
   const selectedCourse = coursesContext.courses.find(
     (course) => course.id === courseId
   );
-
-  if (courseId) {
-    isEditing = true;
-  }
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -26,8 +20,21 @@ export default function ManageCourse({ route, navigation }) {
   }, [navigation, isEditing]);
 
   function deleteCourse() {
-    coursesContext.deleteCourse(courseId);
-    navigation.goBack();
+    Alert.alert(
+      'Dikkat!',
+      'Bu kursu silmek istediğinizden emin misiniz?',
+      [
+        { text: 'İptal', style: 'cancel' },
+        {
+          text: 'Sil',
+          style: 'destructive',
+          onPress: () => {
+            coursesContext.deleteCourse(courseId);
+            navigation.goBack();
+          },
+        },
+      ]
+    );
   }
 
   function cancelHandler() {
@@ -45,6 +52,17 @@ export default function ManageCourse({ route, navigation }) {
 
   return (
     <View style={styles.container}>
+        {isEditing && (
+        <View style={styles.deleteContainer}>
+          <Pressable
+            style={({ pressed }) => [styles.deleteButton, pressed && styles.pressed]}
+            onPress={deleteCourse}
+          >
+            <EvilIcons name="trash" size={36} color="white" />
+          
+          </Pressable>
+        </View>
+      )}
       <CourseForm
         buttonLabel={isEditing ? 'Güncelle' : 'Ekle'}
         onSubmit={addOrUpdateHandler}
@@ -52,30 +70,30 @@ export default function ManageCourse({ route, navigation }) {
         defaultValues={selectedCourse}
       />
 
-      {isEditing && (
-        <View style={styles.deleteContainer}>
-          <EvilIcons
-            name="trash"
-            size={36}
-            color="black"
-            onPress={deleteCourse}
-          />
-        </View>
-      )}
+    
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 25,
+    padding: 20,
+    backgroundColor: '#F9FAFB',
   },
   deleteContainer: {
+    alignSelf: 'flex-end', 
+    marginTop: 20,
+  },
+  deleteButton: {
+    backgroundColor: '#F97316',
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    borderRadius: 10,
+    flexDirection: 'row',
     alignItems: 'center',
-    borderTopWidth: 2,
-    borderTopColor: 'blue',
-    paddingTop: 10,
-    marginTop: 16,
+  },
+  pressed: {
+    opacity: 0.7,
   },
 });
+

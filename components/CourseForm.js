@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, Alert } from 'react-native';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
 import React from 'react';
 import Input from './Input';
 import { useState } from 'react';
@@ -59,11 +59,11 @@ export default function CourseForm({
   }
 
   console.log(inputs);
-  function inputChange(inputIdentifier, enteredValue) {
+  function inputChange(inputIdentifier, entewarningValue) {
     setInputs((currentInput) => {
       return {
         ...currentInput,
-        [inputIdentifier]: { value: enteredValue, isValid: true },
+        [inputIdentifier]: { value: entewarningValue, isValid: true },
       };
     });
   }
@@ -103,17 +103,7 @@ export default function CourseForm({
           value: inputs.description.value,
         }}
       />
-      <View style={styles.error}>
-        {!inputs.amount.isValid && (
-          <Text>Lütfen tutarı doğru formatta giriniz</Text>
-        )}
-        {!inputs.date.isValid && (
-          <Text>Lütfen tarihi doğru formatta giriniz</Text>
-        )}
-        {!inputs.description.isValid && (
-          <Text>Lütfen başlığı doğru formatta giriniz</Text>
-        )}
-      </View>
+    
       <View style={styles.buttons}>
         <Pressable onPress={cancelHandler}>
           <View style={styles.cancel}>
@@ -131,48 +121,43 @@ export default function CourseForm({
 }
 
 const styles = StyleSheet.create({
-  form: {
-    marginTop: 40,
+  title:{
+    fontSize:20,
+    paddingVertical:20
   },
-  title: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: 'blue',
-    marginVertical: 20,
-  },
-  priceAndDate: {
+  buttonContainer: {
     flexDirection: 'row',
+    justifyContent: 'flex-end', 
+    marginTop: 20,
   },
-  flexAll: {
-    flex: 1,
-  },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
+
   cancel: {
-    backgroundColor: 'red',
+    backgroundColor: '#6B7280', 
+    borderRadius: 30,
     minWidth: 120,
-    marginRight: 10,
-    padding: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     alignItems: 'center',
+    marginVertical:5
   },
   cancelText: {
-    color: 'white',
+    color: '#F9FAFB', 
+    fontWeight: '600',
+    fontSize: 16,
   },
+
   addOrDelete: {
-    backgroundColor: 'blue',
+    backgroundColor: '#F97316', 
+    borderRadius: 30,
     minWidth: 120,
-    marginRight: 10,
-    padding: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     alignItems: 'center',
   },
   addOrDeleteText: {
-    color: 'white',
-  },
-  error: {
-    alignItems: 'center',
-    marginBottom: 10,
+    color: '#F9FAFB', 
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
+
