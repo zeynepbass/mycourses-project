@@ -1,13 +1,13 @@
-import { Pressable, StyleSheet, View, Image,Text } from 'react-native';
+import { Pressable, StyleSheet, Text, View, StatusBar } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { AntDesign } from '@expo/vector-icons';
-import Fontisto from '@expo/vector-icons/Fontisto';
-
 import ManageCourse from './screens/ManageCourse';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import RecentCourses from './screens/RecentCourses';
 import AllCourses from './screens/AllCourses';
+import { AntDesign } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import CoursesContextProvider from './store/coursesContext';
 
 const Stack = createNativeStackNavigator();
@@ -17,48 +17,43 @@ function CourseOverview() {
   return (
     <Tab.Navigator
       screenOptions={({ navigation }) => ({
-        headerStyle: { backgroundColor: 'white' },
-        headerTintColor: 'black',
-        tabBarStyle: { backgroundColor: 'white', height: 60 },
-        tabBarActiveTintColor: '#F97316',
+        headerStyle: { backgroundColor: 'pink' },
+        headerTintColor: 'white',
+        tabBarStyle: { backgroundColor: 'pink' },
+        tabBarActiveTintColor: 'darkblue',
         headerRight: () => (
           <Pressable
             style={({ pressed }) => pressed && styles.pressed}
-            onPress={() => navigation.navigate('ManageCourse')}
+            onPress={() => {
+              navigation.navigate('ManageCourse');
+            }}
           >
             <View style={styles.iconContainer}>
-              <AntDesign name="plus" size={24} color="orange" />
+              <AntDesign name="plus" size={24} color="white" />
             </View>
           </Pressable>
         ),
       })}
     >
-
       <Tab.Screen
-        name="Şuanki"
+        name="RecentCourses"
         component={RecentCourses}
         options={{
-          tabBarLabel: '',
-          tabBarIcon: ({ focused }) => (
-            <Image
-              source={require('./assets/hourglass.gif')}
-              style={{
-                width: focused ? 32 : 28, 
-                height: focused ? 32 : 28,
-              }}
-            />
+          title: 'Yakın Zamanda Kaydolunanlar',
+          tabBarLabel: 'Yakın Zamanda',
+          tabBarIcon: ({ color, size }) => (
+            <AntDesign name="hourglass" size={size} color={color} />
           ),
         }}
       />
-
-
       <Tab.Screen
-        name="Tümü"
+        name="AllCourses"
         component={AllCourses}
         options={{
-          tabBarLabel: '',
+          title: 'Tüm Kurslar',
+          tabBarLabel: 'Tüm Kurslar',
           tabBarIcon: ({ color, size }) => (
-            <Fontisto name="world-o" size={size} color={color} />
+            <Entypo name="list" size={size} color={color} />
           ),
         }}
       />
@@ -72,7 +67,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            name="Tümü"
+            name="CourseOverview"
             component={CourseOverview}
             options={{ headerShown: false }}
           />

@@ -1,17 +1,28 @@
-import { Pressable, StyleSheet, Text, View, Alert } from 'react-native';
-import React, { useLayoutEffect, useContext } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { useLayoutEffect } from 'react';
 import { EvilIcons } from '@expo/vector-icons';
+import { useContext } from 'react';
 import { CoursesContext } from '../store/coursesContext';
 import CourseForm from '../components/CourseForm';
+import { storeCourse, updateCourse, deleteCourseHttp } from '../helper/http';
+import LoadingSpinner from '../components/LoadingSpinner';
+import ErrorText from '../components/ErrorText';
 
 export default function ManageCourse({ route, navigation }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState();
   const coursesContext = useContext(CoursesContext);
   const courseId = route.params?.courseId;
-  const isEditing = !!courseId;
+  let isEditing = false;
 
   const selectedCourse = coursesContext.courses.find(
     (course) => course.id === courseId
   );
+
+  if (courseId) {
+    isEditing = true;
+  }
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -19,50 +30,50 @@ export default function ManageCourse({ route, navigation }) {
     });
   }, [navigation, isEditing]);
 
-  function deleteCourse() {
-    Alert.alert(
-      'Dikkat!',
-      'Bu kursu silmek istediğinizden emin misiniz?',
-      [
-        { text: 'İptal', style: 'cancel' },
-        {
-          text: 'Sil',
-          style: 'destructive',
-          onPress: () => {
-            coursesContext.deleteCourse(courseId);
-            navigation.goBack();
-          },
-        },
-      ]
-    );
+  async function deleteCourse() {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      coursesContext.deleteCourse(courseId);
+      await deleteCourseHttp(courseId);
+      navigation.goBack();
+    } catch (error) {
+      setError('Kursları silemedik!');
+      setIsSubmitting(false);
+    }
+  }
+  if (error && !isSubmitting) {
+    return <ErrorText message={error} />;
   }
 
   function cancelHandler() {
     navigation.goBack();
   }
 
-  function addOrUpdateHandler(courseData) {
-    if (isEditing) {
-      coursesContext.updateCourse(courseId, courseData);
-    } else {
-      coursesContext.addCourse(courseData);
+  async function addOrUpdateHandler(courseData) {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      if (isEditing) {
+        coursesContext.updateCourse(courseId, courseData);
+        await updateCourse(courseId, courseData);
+      } else {
+        const id = await storeCourse(courseData);
+        coursesContext.addCourse({ ...courseData, id: id });
+      }
+      navigation.goBack();
+    } catch (error) {
+      setError('Kurs eklemede veya güncellemede problem var!');
+      setIsSubmitting(false);
     }
-    navigation.goBack();
+  }
+
+  if (isSubmitting) {
+    return <LoadingSpinner />;
   }
 
   return (
     <View style={styles.container}>
-        {isEditing && (
-        <View style={styles.deleteContainer}>
-          <Pressable
-            style={({ pressed }) => [styles.deleteButton, pressed && styles.pressed]}
-            onPress={deleteCourse}
-          >
-            <EvilIcons name="trash" size={36} color="white" />
-          
-          </Pressable>
-        </View>
-      )}
       <CourseForm
         buttonLabel={isEditing ? 'Güncelle' : 'Ekle'}
         onSubmit={addOrUpdateHandler}
@@ -70,30 +81,30 @@ export default function ManageCourse({ route, navigation }) {
         defaultValues={selectedCourse}
       />
 
-    
+      {isEditing && (
+        <View style={styles.deleteContainer}>
+          <EvilIcons
+            name="trash"
+            size={36}
+            color="black"
+            onPress={deleteCourse}
+          />
+        </View>
+      )}
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#F9FAFB',
+    padding: 25,
   },
   deleteContainer: {
-    alignSelf: 'flex-end', 
-    marginTop: 20,
-  },
-  deleteButton: {
-    backgroundColor: '#F97316',
-    paddingVertical: 5,
-    paddingHorizontal: 5,
-    borderRadius: 10,
-    flexDirection: 'row',
     alignItems: 'center',
-  },
-  pressed: {
-    opacity: 0.7,
+    borderTopWidth: 2,
+    borderTopColor: 'blue',
+    paddingTop: 10,
+    marginTop: 16,
   },
 });
-
